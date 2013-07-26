@@ -1,0 +1,39 @@
+
+These instructions are only expected to be required on Windows, though
+I haven't tried compiling this wrapper on other platforms yet. 
+
+Unpack your binary distribution of leptonica and tesseract
+to the 'leptonica' and 'tesseract' directories. When finished, you 
+should end up with a directory structure that looks like this. 
+
+    leptonica\
+        include\
+            leptonica\
+        libs\
+        
+    tesseract\
+        include\
+            tesseract\
+        libs\
+        
+Tesseract
+=========
+        
+The latest version of the tesseract files can be obtained from
+
+    http://code.google.com/p/tesseract-ocr/downloads/list
+    
+And the file that you're looking for is:
+
+    tesseract-3.02.02-win32-lib-include-dirs.zip
+    
+Leptonica
+=========
+    
+The latest version of the leptonica files can be obtained from
+
+    http://code.google.com/p/leptonica/downloads/list
+    
+And the file that you're looking for is:
+
+    leptonica-1.68-win32-lib-include-dirs.zip 

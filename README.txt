@@ -24,17 +24,17 @@ Additionally, SIP must be installed. You can get SIP at:
 
 Usage
 =====
-
-Mostly identical to python-tesseract, see the wiki on their google code site
-for similar usage examples. 
-
-    http://code.google.com/p/python-tesseract/
-    
-Examples
-========
     
 There are working examples in the 'examples' folder. They require you to
 unpack the tesseract OCR data to a directory called 'tessdata'. 
+
+The python-tesseract wiki has some useful python code samples. Anything
+that uses the TessBaseAPI will most likely be compatible with this library.
+However, they have a bunch of other functions (which may or may not be 
+useful for you) that are not implemented in this wrapper. See the wiki 
+on their google code site for similar usage examples. 
+
+    http://code.google.com/p/python-tesseract/
     
 Platforms
 =========

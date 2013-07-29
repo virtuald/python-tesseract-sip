@@ -26,7 +26,7 @@ class TessBaseAPI
     %End
     
     %TypeCode
-        Pix * mFileImage;
+        Pix * mImage;
         
         // wrapper around stuff that returns strings that need
         // to be deleted, avoiding memory leaks
@@ -59,15 +59,15 @@ class TessBaseAPI
     Py_BEGIN_ALLOW_THREADS
     
     sipCpp = new sipTessBaseAPI();
-    mFileImage = NULL;
+    mImage = NULL;
     
     Py_END_ALLOW_THREADS
   %End
   
   virtual ~TessBaseAPI();
   %MethodCode
-    if (mFileImage != NULL)
-        pixDestroy(&mFileImage);
+    if (mImage != NULL)
+        pixDestroy(&mImage);
   %End
 
   /**
@@ -310,16 +310,16 @@ class TessBaseAPI
   
   bool SetImageFile(const char * filename);
   %MethodCode
-    if (mFileImage != NULL)
-        pixDestroy(&mFileImage);
+    if (mImage != NULL)
+        pixDestroy(&mImage);
         
-    mFileImage = pixRead(a0);
-    if (mFileImage == NULL)
+    mImage = pixRead(a0);
+    if (mImage == NULL)
         sipRes = false;
     else
     {
         Py_BEGIN_ALLOW_THREADS
-        sipCpp->SetImage(mFileImage);
+        sipCpp->SetImage(mImage);
         Py_END_ALLOW_THREADS
         
         sipRes = true;

@@ -27,6 +27,30 @@ class TessBaseAPI
     
     %TypeCode
         Pix * mFileImage;
+        
+        // wrapper around stuff that returns strings that need
+        // to be deleted, avoiding memory leaks
+        
+        PyObject * getStringObject(char * str)
+        {
+            if (str == NULL)
+            {
+                Py_INCREF(Py_None);
+                return Py_None;
+            }
+            
+            PyObject * object;
+            
+            #if PY_MAJOR_VERSION >= 3
+                object = PyUnicode_FromString(str);
+            #else
+                object = PyUnicode_DecodeUTF8(str, strlen(str), NULL);
+            #endif
+            
+            delete [] str;
+            return object;
+        }
+        
     %End
 
  public:
@@ -233,9 +257,12 @@ class TessBaseAPI
    * For advanced uses, use SetImage, (optionally) SetRectangle, Recognize,
    * and one or more of the Get*Text functions below.
    */
-  char* TesseractRect(const unsigned char* imagedata,
+  PyObject* TesseractRect(const unsigned char* imagedata,
                       int bytes_per_pixel, int bytes_per_line,
                       int left, int top, int width, int height);
+    %MethodCode
+        sipRes = getStringObject(sipCpp->TesseractRect(a0, a1, a2, a3, a4, a5, a6));
+    %End
 
   /**
    * Call between pages or documents etc to free up memory and forget
@@ -489,7 +516,10 @@ class TessBaseAPI
    * The recognized text is returned as a char* which is coded
    * as UTF8 and must be freed with the delete [] operator.
    */
-  char* GetUTF8Text();
+  PyObject* GetUTF8Text();
+    %MethodCode
+        sipRes = getStringObject(sipCpp->GetUTF8Text());
+    %End
 
   /**
    * Make a HTML-formatted string with hOCR markup from the internal
@@ -497,6 +527,7 @@ class TessBaseAPI
    * page_number is 0-based but will appear in the output as 1-based.
    */
   char* GetHOCRText(int page_number);
+  
   /**
    * The recognized text is returned as a char* which is coded in the same
    * format as a box file used in training. Returned string must be freed with
@@ -504,13 +535,20 @@ class TessBaseAPI
    * Constructs coordinates in the original image - not just the rectangle.
    * page_number is a 0-based page index that will appear in the box file.
    */
-  char* GetBoxText(int page_number);
+  PyObject* GetBoxText(int page_number);
+  %MethodCode
+    sipRes = getStringObject(sipCpp->GetBoxText(a0));
+  %End
   /**
    * The recognized text is returned as a char* which is coded
    * as UNLV format Latin-1 with specific reject and suspect codes
    * and must be freed with the delete [] operator.
    */
-  char* GetUNLVText();
+  PyObject* GetUNLVText();
+    %MethodCode
+        sipRes = getStringObject(sipCpp->GetUNLVText());
+    %End
+  
   /** Returns the (average) confidence value between 0 and 100. */
   int MeanTextConf();
   /**

@@ -693,12 +693,11 @@ class TessBaseAPI
   /*
   Tesseract* const tesseract() const {
     return tesseract_;
-  }
+  }*/
   
-  OcrEngineMode const oem() const {
-    return last_oem_requested_;
-  }
-
+  OcrEngineMode oem();
+  
+  /*
   void InitTruthCallback(TruthCallback *cb) { truth_cb_ = cb; }
   */
   

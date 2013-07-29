@@ -175,7 +175,9 @@ class TessBaseAPI
   // returns True if initialized successfully
   bool Init(const char* datapath, const char* language, OcrEngineMode oem);
   %MethodCode
+    Py_BEGIN_ALLOW_THREADS
     sipRes = (sipCpp->Init(a0, a1, a2, NULL, 0, NULL, NULL, false) == 0);
+    Py_END_ALLOW_THREADS
   %End
   
   /*
@@ -261,7 +263,11 @@ class TessBaseAPI
                       int bytes_per_pixel, int bytes_per_line,
                       int left, int top, int width, int height);
     %MethodCode
-        sipRes = getStringObject(sipCpp->TesseractRect(a0, a1, a2, a3, a4, a5, a6));
+        char * tmpStr;
+        Py_BEGIN_ALLOW_THREADS
+        tmpStr = sipCpp->TesseractRect(a0, a1, a2, a3, a4, a5, a6);
+        Py_END_ALLOW_THREADS
+        sipRes = getStringObject(tmpStr);
     %End
 
   /**
@@ -312,7 +318,10 @@ class TessBaseAPI
         sipRes = false;
     else
     {
+        Py_BEGIN_ALLOW_THREADS
         sipCpp->SetImage(mFileImage);
+        Py_END_ALLOW_THREADS
+        
         sipRes = true;
     }
   %End
@@ -518,7 +527,11 @@ class TessBaseAPI
    */
   PyObject* GetUTF8Text();
     %MethodCode
-        sipRes = getStringObject(sipCpp->GetUTF8Text());
+        char * tmpStr;
+        Py_BEGIN_ALLOW_THREADS
+        tmpStr = sipCpp->GetUTF8Text();
+        Py_END_ALLOW_THREADS
+        sipRes = getStringObject(tmpStr);
     %End
 
   /**
@@ -537,7 +550,11 @@ class TessBaseAPI
    */
   PyObject* GetBoxText(int page_number);
   %MethodCode
-    sipRes = getStringObject(sipCpp->GetBoxText(a0));
+    char * tmpStr;
+    Py_BEGIN_ALLOW_THREADS
+    tmpStr = sipCpp->GetBoxText(a0);
+    Py_END_ALLOW_THREADS
+    sipRes = getStringObject(tmpStr);
   %End
   /**
    * The recognized text is returned as a char* which is coded
@@ -546,7 +563,11 @@ class TessBaseAPI
    */
   PyObject* GetUNLVText();
     %MethodCode
-        sipRes = getStringObject(sipCpp->GetUNLVText());
+        char * tmpStr;
+        Py_BEGIN_ALLOW_THREADS
+        tmpStr = sipCpp->GetUNLVText();
+        Py_END_ALLOW_THREADS
+        sipRes = getStringObject(tmpStr);
     %End
   
   /** Returns the (average) confidence value between 0 and 100. */
@@ -559,7 +580,12 @@ class TessBaseAPI
    */
   PyObject * AllWordConfidences();
   %MethodCode
-    int * confidences = sipCpp->AllWordConfidences();
+    int * confidences;
+    
+    Py_BEGIN_ALLOW_THREADS
+    confidences = sipCpp->AllWordConfidences();
+    Py_END_ALLOW_THREADS
+    
     int * ptr = confidences;
     
     // count first

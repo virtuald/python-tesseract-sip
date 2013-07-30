@@ -18,6 +18,14 @@
 ///////////////////////////////////////////////////////////////////////
 
 
+/*
+    Note: On Windows, if you do a delete [] operation and the
+    runtime library for tesseract doesn't match the runtime
+    library used to compile this, then you will probably get 
+    memory access violations and other problems. 
+*/
+
+
 class TessBaseAPI 
 {
     %TypeHeaderCode
@@ -306,10 +314,25 @@ class TessBaseAPI
    * Because of that, an implementation that sources and targets Pix may end up
    * with less copies than an implementation that does not.
    */
-  //void SetImage(const Pix* pix);
+  void SetImage(Pix* /Transfer/); 
+  %MethodCode
+    
+    Py_BEGIN_ALLOW_THREADS
+    
+    if (mImage != NULL)
+        pixDestroy(&mImage);
+    
+    mImage = a0;
+    sipCpp->SetImage(a0);
+    
+    Py_END_ALLOW_THREADS
+  %End
   
   bool SetImageFile(const char * filename);
   %MethodCode
+  
+    Py_BEGIN_ALLOW_THREADS
+  
     if (mImage != NULL)
         pixDestroy(&mImage);
         
@@ -318,12 +341,12 @@ class TessBaseAPI
         sipRes = false;
     else
     {
-        Py_BEGIN_ALLOW_THREADS
         sipCpp->SetImage(mImage);
-        Py_END_ALLOW_THREADS
-        
         sipRes = true;
     }
+    
+    Py_END_ALLOW_THREADS
+    
   %End
 
   /**
@@ -361,8 +384,8 @@ class TessBaseAPI
    * Caller takes ownership of the Pix and must pixDestroy it.
    * May be called any time after SetImage, or after TesseractRect.
    */
-  //Pix* GetThresholdedImage();
-
+  Pix* GetThresholdedImage() /TransferBack/;
+  
   /**
    * Get the result of page layout analysis as a leptonica-style
    * Boxa, Pixa pair, in reading order.

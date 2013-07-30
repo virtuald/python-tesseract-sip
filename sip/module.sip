@@ -11,6 +11,7 @@
 %Include sip/publictypes.sip
 %Include sip/strngs.sip
 %Include sip/baseapi.sip
+%Include sip/pix.sip
 
 
 

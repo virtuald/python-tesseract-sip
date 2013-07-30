@@ -11,6 +11,10 @@ if __name__ == '__main__':
         # and unpack it in this directory. 
         print >> sys.stderr, 'WARNING: tesseract OCR data directory was not found'
     
+    image_file = 'phototest.tif'
+    if len(sys.argv) == 2:
+        image_file = sys.argv[1]
+    
     api = tesseract.TessBaseAPI()
     
     if not api.Init('tessdata', 'eng', tesseract.OEM_DEFAULT):
@@ -18,7 +22,7 @@ if __name__ == '__main__':
         exit(1)
 
     api.SetPageSegMode(tesseract.PSM_AUTO)
-    api.SetImageFile('phototest.tif')
+    api.SetImageFile(image_file)
     
     print api.GetUTF8Text()
     print api.AllWordConfidences()

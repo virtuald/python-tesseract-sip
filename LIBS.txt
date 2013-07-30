@@ -2,17 +2,19 @@
 These instructions are only expected to be required on Windows, though
 I haven't tried compiling this wrapper on other platforms yet. 
 
-Unpack your binary distribution of leptonica and tesseract
-to the 'leptonica' and 'tesseract' directories. When finished, you 
-should end up with a directory structure that looks like this. 
+You should unpack your binary distribution of leptonica and tesseract
+to conform with the uniform source tree structure that is expected by
+the tesseract/leptonica projects. As a bonus, if you need to compile
+tesseract/leptonica by hand, then you won't need to change anything
+around to make that work. 
 
-    leptonica\
+When finished, you should end up with a directory structure that looks 
+like this. 
+
+    BuildFolder\
+        python-tesseract-sip\
         include\
             leptonica\
-        libs\
-        
-    tesseract\
-        include\
             tesseract\
         libs\
         

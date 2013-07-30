@@ -1,6 +1,6 @@
 
-What is this?
-=============
+python-tesseract-sip 0.1
+========================
 
 Yet another python library wrapper for Tesseract, this one uses SIP to do the
 wrapping. Distributed using the same license as Tesseract. 
@@ -15,8 +15,7 @@ Build Requirements
 ==================
 
 You must have a compiler installed that is supported by python distutils.
-
-On Windows, you need to 
+Check out LIBS.txt for other dependency details. 
 
 Additionally, SIP must be installed. You can get SIP at:
 
@@ -36,13 +35,24 @@ on their google code site for similar usage examples.
 
     http://code.google.com/p/python-tesseract/
     
-Platforms
-=========
+Platforms Tested
+================
 
     Windows 7 x64
-        - Python 2.7 x86, MSVC
+        - Python 2.7 x86, MSVC 2008 (Tesseract 3.02, Leptonica 1.68)
+        - Python 2.7 x64, MSVC 2008 (custom x64 build of Tess/Lept)
 
 Support
 =======
 
-No support is provided. Good luck and have fun!
+If you do find bugs, please send fixes my way, and report them at the github
+site for python-tesseract-sip. However, no technical support will be 
+provided. Good luck and have fun! 
+
+Dustin Spicuzza
+dustin@virtualroadside.com
+
+Get the latest version of this code at 
+https://github.com/virtuald/python-tesseract-sip
+
+

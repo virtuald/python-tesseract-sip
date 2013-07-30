@@ -59,14 +59,13 @@ extra_compile_args = None
 extra_link_args = None
 
 if sys.platform == "win32":
-    libs_dir = os.path.join(root, 'libs')
-    tess_dir = os.path.join(libs_dir, 'tesseract')
-    library_dirs.append(os.path.join(tess_dir, 'lib'))
-    include_dirs.append(os.path.join(tess_dir, 'include'))
+    libs_dir = os.path.join(root, '..', 'lib')
+    include_dir = os.path.join(root, '..', 'include')
     
-    lept_dir = os.path.join(libs_dir, 'leptonica')
-    library_dirs.append(os.path.join(lept_dir, 'lib'))
-    include_dirs.append(os.path.join(lept_dir, 'include'))
+    library_dirs.append(libs_dir)
+    include_dirs.append(include_dir)
+    #include_dirs.append(os.path.join(include_dir, 'tesseract'))
+    #include_dirs.append(os.path.join(include_dir, 'leptonica'))
     
     # Generate pdb files for debugging on msvc only
     if 'TESS_DEBUG' in os.environ and str(os.environ['TESS_DEBUG']) == "1":
@@ -85,7 +84,7 @@ class custom_install(install_lib):
         def install(self):
             # copy the tesseract/leptonica DLL also
             self.copy_file(os.path.join(library_dirs[0], 'libtesseract302.dll'), self.build_dir)
-            self.copy_file(os.path.join(library_dirs[1], 'liblept168.dll'), self.build_dir)
+            self.copy_file(os.path.join(library_dirs[0], 'liblept168.dll'), self.build_dir)
             return install_lib.install(self)
     
 setup(

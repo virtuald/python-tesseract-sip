@@ -609,32 +609,40 @@ class TessBaseAPI
     confidences = sipCpp->AllWordConfidences();
     Py_END_ALLOW_THREADS
     
-    int * ptr = confidences;
-    
-    // count first
-    int count = 0;
-    
-    while (*ptr != -1) ptr++;
-    count = ptr - confidences;
-    
-    // create the list
-    sipRes = PyList_New(count);
-    if (sipRes != NULL)
-    {
-        ptr = confidences;
-        int i = 0;
-        
-        // put the integers on the list
-        while (*ptr != -1)
-        {
-            PyList_SET_ITEM(sipRes, i, PyInt_FromLong((long)*ptr));
-            
-            i++;
-            ptr++;
-        }
+    if (confidences == NULL)
+    {   
+        Py_INCREF(Py_None);
+        sipRes = Py_None;
     }
-    
-    delete [] confidences;
+    else
+    {
+        int * ptr = confidences;
+        
+        // count first
+        int count = 0;
+        
+        while (*ptr != -1) ptr++;
+        count = ptr - confidences;
+        
+        // create the list
+        sipRes = PyList_New(count);
+        if (sipRes != NULL)
+        {
+            ptr = confidences;
+            int i = 0;
+            
+            // put the integers on the list
+            while (*ptr != -1)
+            {
+                PyList_SET_ITEM(sipRes, i, PyInt_FromLong((long)*ptr));
+                
+                i++;
+                ptr++;
+            }
+        }
+        
+        delete [] confidences;
+    }
   %End
   
 

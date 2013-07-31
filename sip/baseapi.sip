@@ -317,6 +317,12 @@ class TessBaseAPI
   void SetImage(Pix* /Transfer/); 
   %MethodCode
     
+    if (a0 == NULL)
+    {
+        PyErr_SetString(PyExc_ValueError, "None is not a valid argument");
+        return NULL;
+    }
+    
     Py_BEGIN_ALLOW_THREADS
     
     if (mImage != NULL)

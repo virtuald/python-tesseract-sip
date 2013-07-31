@@ -89,8 +89,14 @@ public:
     
     Py_buffer view;
     
+    // initialize this to error, unset it at the end when there is no error
+    *sipIsErr = 1;
+    
     if (PyObject_GetBuffer(sipPy, &view, PyBUF_STRIDES) == -1)
+    {
+        PyErr_SetString(PyExc_TypeError, "Buffer does not support strides");
         return NULL;
+    }
         
     if (view.ndim == 2 && view.ndim != 3 && view.ndim != 4)
     {
@@ -132,13 +138,30 @@ public:
     }
     
     int pixLen = pix->h * (pix->wpl * 4);
-    if (pixLen != view.len)
+    if (pixLen == view.len)
     {
-        PyErr_SetString(PyExc_TypeError, "Internal error: pixLen != view.len");
+        memcpy(pix->data, view.buf, view.len);
+    }
+    else if (pixLen > view.len)
+    {
+        // this mean that the header allocated padding for the buffer,
+        // so we should copy it differently
+        unsigned char * pixPtr = (unsigned char *)pix->data;
+        unsigned char * bufPtr = (unsigned char *)view.buf;
+        
+        l_uint32 bufStride = w * (d/8);
+        l_uint32 pixStride = pix->wpl * 4;
+        
+        for (l_int32 i = 0; i < h; ++i, bufPtr += bufStride, pixPtr += pixStride)
+            memcpy(pixPtr, bufPtr, bufStride);
+    }
+    else
+    {
+        PyErr_SetString(PyExc_TypeError, "Internal error: pixLen < view.len");
         return NULL;
     }
     
-    memcpy(pix->data, view.buf, view.len);
+    
     PyBuffer_Release(&view);
     
     if (d != 8 && d != 32)

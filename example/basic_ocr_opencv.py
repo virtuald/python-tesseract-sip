@@ -29,5 +29,12 @@ if __name__ == '__main__':
     cvimg = cv2.imread(image_file)
     api.SetImage(cvimg)
     
-    print api.GetUTF8Text()
+    text = api.GetUTF8Text()
+    
+    # on Windows, the console can't print UTF-8 by default
+    try:
+        print text
+    except UnicodeEncodeError:
+        print text.encode(sys.getdefaultencoding(), 'backslashreplace')
+    
     print api.AllWordConfidences()

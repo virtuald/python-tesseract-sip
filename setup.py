@@ -90,6 +90,11 @@ class custom_install(install_lib):
 setup(
     name = 'tesseract_sip',
     version = '0.1',
+    author = 'Dustin Spicuzza',
+    author_email = 'dustin@virtualroadside.com',
+    description = 'A SIP-based python wrapper around libtesseract',
+    url = 'https://github.com/virtuald/python-tesseract-sip',
+    license = 'Apache 2.0',
     ext_modules=[
         Extension("tesseract_sip", source_files,
                   include_dirs=include_dirs,

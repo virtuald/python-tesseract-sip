@@ -26,8 +26,6 @@ public:
     ~Pix();
     %MethodCode
         
-        printf("Destroy %p\n", sipCpp);
-        
         Py_BEGIN_ALLOW_THREADS
         pixDestroy(&sipCpp);
         Py_END_ALLOW_THREADS

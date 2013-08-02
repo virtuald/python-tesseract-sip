@@ -1,4 +1,5 @@
 
+
 class Pix
 {
 %TypeHeaderCode
@@ -43,33 +44,60 @@ public:
         pixWrite(a0, sipCpp, IFF_DEFAULT);
     %End
     
+    // returns an object that implements the buffer interface
+    // in a sensible way that can be used with numpy, as opposed
+    // to the mess that you get with pix's internal format... 
+    //
+    // Object is a copy
+    PixBuffer * get_buffer();
+    %MethodCode
+        Py_BEGIN_ALLOW_THREADS
+        
+        try
+        {
+            sipRes = new PixBuffer(sipCpp);
+        }
+        catch (const char * msg)
+        {
+            Py_BLOCK_THREADS
+            
+            PyErr_SetString(PyExc_TypeError, msg);
+            return NULL;
+        }
+        
+        Py_END_ALLOW_THREADS
+    %End
     
-    
-//
-//  Buffer interface
-//
-
-//%BIGetBufferCode      // python 3
-//%End
-
-//%BIReleaseBufferCode  // python 3
-//%End
-
-%BIGetReadBufferCode    // python 2
-    *sipPtrPtr = pixGetData(sipCpp);
-    sipRes = sipCpp->h * (sipCpp->wpl * 4);
-%End
-
-%BIGetSegCountCode      // python 2
-    if (sipLenPtr)
-        *sipLenPtr = sipCpp->h * (sipCpp->wpl * 4);
-    sipRes = 1;
-%End
-
-%BIGetWriteBufferCode   // python 2
-    *sipPtrPtr = pixGetData(sipCpp);
-    sipRes = sipCpp->h * (sipCpp->wpl * 4);
-%End
+    // returns the shape of the buffer object
+    PyObject * get_buffer_shape();
+    %MethodCode
+        int d;
+        
+        switch (sipCpp->d)
+        {
+            case 1:  d = 1; break;
+            case 8:  d = 1; break;
+            case 24: d = 3; break;
+            case 32: d = 3; break;  // 4th channel ignored
+            default:
+                PyErr_SetString(PyExc_ValueError, "Invalid depth");
+                return NULL;
+        }
+        
+        PyObject * ph = PyInt_FromLong(sipCpp->h);
+        PyObject * pw = PyInt_FromLong(sipCpp->w);
+        PyObject * pd = PyInt_FromLong(d);
+        
+        if (!ph || !pw || !pd)
+        {
+            Py_XDECREF(ph);
+            Py_XDECREF(pw);
+            Py_XDECREF(pd);
+            return NULL;
+        }
+        
+        sipRes = PyTuple_Pack(3, ph, pw, pd);
+    %End
 
 //
 // Conversion

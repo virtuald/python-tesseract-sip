@@ -17,36 +17,10 @@ def cv_from_pix(pix):
     # buffer length in pix object is expressed in bytes, so we
     # always use np.uint8 to read it
     
-    if pix.d == 1:        
-        img = np.frombuffer(pix, np.uint8)
-        img.shape = (-1,4)
-        img = img[:,[3,2,1,0]]  # byteswap
-        
-        # this makes a copy
-        img = np.unpackbits(img)
-        
-        # unpackbits gives us 0 and 1, transform to 255 and 0
-        img = np.array((255,0), dtype=np.uint8)[img]
-        img.shape = (pix.h, pix.w, 1)
-
-        return img
-        
-    elif pix.d == 8:
-        img = np.frombuffer(pix, np.uint8)
-        img.shape = (-1,4)
-        img = img[:,[3,2,1,0]]  # byteswap
-        
-        # this makes a copy
-        return img.reshape((pix.h, pix.w, 1))
-        
-    elif pix.d == 32:
-        
-        img = np.frombuffer(pix, np.uint8)
-        img.shape = (pix.h, pix.w, 4)
-        return img[:,:,[1, 2, 3, 0]]    # convert to BGRA
-        
-    raise RuntimeError("Unsupported depth %s" % pix.d)
-
+    buf = np.frombuffer(pix.get_buffer(), np.uint8)
+    buf.shape = pix.get_buffer_shape()
+    
+    return buf
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ import numpy as np
 import tesseract_sip as tesseract
 
 
-def cv_from_pix(pix):
+def np_from_pix(pix):
     '''
         Converts a leptonica Pix object into a numpy array suitable
         for using with OpenCV cv2 API
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     #
     
     timg = api.GetThresholdedImage()
-    lpimg = cv_from_pix(timg)
+    lpimg = np_from_pix(timg)
     
     # display it to the user
     cv2.imshow('Tesseract Threshold Image', lpimg)

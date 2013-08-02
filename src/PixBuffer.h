@@ -37,6 +37,7 @@ struct PixBuffer
         
         len = h * w * d;
         buffer = new unsigned char[len];
+        memset(buffer, 0x55, len);
         
         // unpack the pix data to something sensible
         if (pix->d == 1)
@@ -102,19 +103,19 @@ struct PixBuffer
                         
                         l_uint32  pixData = pixPtr[j];
                         
-                        *bufPtr = (unsigned char)(pixData >> 8);
-                        *bufPtr += 1;
+                        *bufPtr = (unsigned char)(pixData >> 24);
+                        ++bufPtr;
                         
                         if (rem > 1)
                         {
                             *bufPtr = (unsigned char)(pixData >> 16);
-                            *bufPtr += 1;
+                            ++bufPtr;
                         }
                         
                         if (rem > 2)
                         {
-                            *bufPtr = (unsigned char)(pixData >> 24);
-                            *bufPtr += 1;
+                            *bufPtr = (unsigned char)(pixData >> 8);
+                            ++bufPtr;
                         }
                     }
                 }

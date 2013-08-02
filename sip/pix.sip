@@ -1,6 +1,6 @@
 
 
-class Pix
+class Pix /Abstract/
 {
 %TypeHeaderCode
     #include <leptonica/allheaders.h>
@@ -25,14 +25,41 @@ public:
 
     ~Pix();
     %MethodCode
+        
+        printf("Destroy %p\n", sipCpp);
+        
         Py_BEGIN_ALLOW_THREADS
         pixDestroy(&sipCpp);
         Py_END_ALLOW_THREADS
+        
+        // this is always true
+        if (sipCpp == NULL)
+            return;
     %End
     
     /*
         Utility methods to read/write to a file
     */
+    
+    static Pix* from_buffer(PyObject *);
+    %MethodCode
+    
+        if (sipCanConvertToType(a0, sipType_Pix, SIP_NOT_NONE))
+        {
+            int sipResState = 0;
+            int isError = 0;
+            
+            sipRes = (Pix*)sipConvertToType(a0, sipType_Pix, NULL, SIP_NOT_NONE, &sipResState, &isError);
+            if (isError)
+                return NULL;
+        }
+        else
+        {
+            PyErr_SetString(PyExc_TypeError, "Cannot convert from type");
+            return NULL;
+        }
+    
+    %End
     
     static Pix* read(const char * filename);
     %MethodCode
@@ -144,17 +171,14 @@ public:
     int d = 8;              // number of bits
     
     if (view.ndim == 3)
-        d = view.shape[2] * 8;
-        
-    if (view.ndim == 4)
     {
-        if (view.shape[3] != 1)
+        if (view.shape[2] > 3)
         {
-            PyErr_SetString(PyExc_TypeError, "Dimension 4 must be 1");
+            PyErr_SetString(PyExc_TypeError, "Dimension 3 must be <= 3 (Alpha channel would be ignored)");
             return NULL;
         }
     
-        d += 1;
+        d = view.shape[2] * 8;
     }
     
     // create the pix and copy the data over
@@ -200,7 +224,11 @@ public:
         pix = tmp;
     }
     
-    if (pix->d == 32)
+    if (pix->d == 8)
+    {
+        pixEndianByteSwap(pix);
+    }
+    else if (pix->d == 32)
     {
         // convert BGRA to RGBA (derived from lept byteswap code)
         l_uint32 * data = pix->data;

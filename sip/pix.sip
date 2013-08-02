@@ -126,7 +126,7 @@ public:
         return NULL;
     }
         
-    if (view.ndim == 2 && view.ndim != 3 && view.ndim != 4)
+    if (view.ndim != 2 && view.ndim != 3 && view.ndim != 4)
     {
         PyErr_SetString(PyExc_TypeError, "Number of dimensions must be 2, 3, or 4");
         return NULL;

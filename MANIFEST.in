@@ -1,0 +1,5 @@
+recursive-include example *.py *.tif
+recursive-include sip *.sip
+recursive-include src *.h
+include LICENSE.txt
+include LIBS.txt

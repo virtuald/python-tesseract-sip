@@ -52,7 +52,10 @@ class custom_build_ext(sipdistutils.build_ext):
         sipdistutils.build_ext.build_extensions(self)
 
 source_files = [os.path.join(sip_dir, 'module.sip'),]
-libraries = ['libtesseract302', 'liblept168']
+if sys.platform == "win32":
+  libraries = ['libtesseract302', 'liblept168']
+else:
+  libraries = ['tesseract', 'lept']
 library_dirs = []
 include_dirs = [src_dir, sip_dir]
 extra_compile_args = None

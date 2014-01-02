@@ -1,6 +1,6 @@
 
-python-tesseract-sip 0.1
-========================
+python-tesseract-sip
+====================
 
 Yet another python library wrapper for Tesseract, this one uses SIP to do the
 wrapping. Distributed using the same license as Tesseract. 

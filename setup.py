@@ -92,7 +92,7 @@ class custom_install(install_lib):
     
 setup(
     name = 'tesseract_sip',
-    version = '0.1',
+    version = '0.1.1',
     author = 'Dustin Spicuzza',
     author_email = 'dustin@virtualroadside.com',
     description = 'A SIP-based python wrapper around libtesseract',

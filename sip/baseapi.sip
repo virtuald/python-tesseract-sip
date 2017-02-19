@@ -21,24 +21,28 @@
 /*
     Note: On Windows, if you do a delete [] operation and the
     runtime library for tesseract doesn't match the runtime
-    library used to compile this, then you will probably get
-    memory access violations and other problems.
+    library used to compile this, then you will probably get 
+    memory access violations and other problems. 
 */
 
 
-class TessBaseAPI
+class TessBaseAPI 
 {
     %TypeHeaderCode
         #include <tesseract/baseapi.h>
         #include <leptonica/allheaders.h>
     %End
-
+    
     %TypeCode
         Pix * mImage;
 
+        #if PY_MAJOR_VERSION >= 3
+            #define PyInt_FromLong PyLong_FromLong
+        #endif
+        
         // wrapper around stuff that returns strings that need
         // to be deleted, avoiding memory leaks
-
+        
         PyObject * getStringObject(char * str)
         {
             if (str == NULL)
@@ -46,32 +50,32 @@ class TessBaseAPI
                 Py_INCREF(Py_None);
                 return Py_None;
             }
-
+            
             PyObject * object;
-
+            
             #if PY_MAJOR_VERSION >= 3
                 object = PyUnicode_FromString(str);
             #else
                 object = PyUnicode_DecodeUTF8(str, strlen(str), NULL);
             #endif
-
+            
             delete [] str;
             return object;
         }
-
+        
     %End
 
  public:
   TessBaseAPI();
   %MethodCode
     Py_BEGIN_ALLOW_THREADS
-
+    
     sipCpp = new sipTessBaseAPI();
     mImage = NULL;
-
+    
     Py_END_ALLOW_THREADS
   %End
-
+  
   virtual ~TessBaseAPI();
   %MethodCode
     if (mImage != NULL)
@@ -179,7 +183,7 @@ class TessBaseAPI
            const GenericVector<STRING> *vars_values,
            bool set_only_non_debug_params);
     */
-
+  
   // returns True if initialized successfully
   bool Init(const char* datapath, const char* language, OcrEngineMode oem);
   %MethodCode
@@ -187,7 +191,7 @@ class TessBaseAPI
     sipRes = (sipCpp->Init(a0, a1, a2, NULL, 0, NULL, NULL, false) == 0);
     Py_END_ALLOW_THREADS
   %End
-
+  
   /*
   int Init(const char* datapath, const char* language) {
     return Init(datapath, language, OEM_DEFAULT, NULL, 0, NULL, NULL, false);
@@ -314,34 +318,34 @@ class TessBaseAPI
    * Because of that, an implementation that sources and targets Pix may end up
    * with less copies than an implementation that does not.
    */
-  void SetImage(Pix* /Transfer/);
+  void SetImage(Pix* /Transfer/); 
   %MethodCode
-
+    
     if (a0 == NULL)
     {
         PyErr_SetString(PyExc_ValueError, "None is not a valid argument");
         return NULL;
     }
-
+    
     Py_BEGIN_ALLOW_THREADS
-
+    
     if (mImage != NULL)
         pixDestroy(&mImage);
-
+    
     mImage = a0;
     sipCpp->SetImage(a0);
-
+    
     Py_END_ALLOW_THREADS
   %End
-
+  
   bool SetImageFile(const char * filename);
   %MethodCode
-
+  
     Py_BEGIN_ALLOW_THREADS
-
+  
     if (mImage != NULL)
         pixDestroy(&mImage);
-
+        
     mImage = pixRead(a0);
     if (mImage == NULL)
         sipRes = false;
@@ -350,9 +354,9 @@ class TessBaseAPI
         sipCpp->SetImage(mImage);
         sipRes = true;
     }
-
+    
     Py_END_ALLOW_THREADS
-
+    
   %End
 
   /**
@@ -391,7 +395,7 @@ class TessBaseAPI
    * May be called any time after SetImage, or after TesseractRect.
    */
   Pix* GetThresholdedImage() /TransferBack/;
-
+  
   /**
    * Get the result of page layout analysis as a leptonica-style
    * Boxa, Pixa pair, in reading order.
@@ -569,7 +573,7 @@ class TessBaseAPI
    * page_number is 0-based but will appear in the output as 1-based.
    */
   char* GetHOCRText(int page_number);
-
+  
   /**
    * The recognized text is returned as a char* which is coded in the same
    * format as a box file used in training. Returned string must be freed with
@@ -598,7 +602,7 @@ class TessBaseAPI
         Py_END_ALLOW_THREADS
         sipRes = getStringObject(tmpStr);
     %End
-
+  
   /** Returns the (average) confidence value between 0 and 100. */
   int MeanTextConf();
   /**
@@ -610,51 +614,47 @@ class TessBaseAPI
   PyObject * AllWordConfidences();
   %MethodCode
     int * confidences;
-
+    
     Py_BEGIN_ALLOW_THREADS
     confidences = sipCpp->AllWordConfidences();
     Py_END_ALLOW_THREADS
-
+    
     if (confidences == NULL)
-    {
+    {   
         Py_INCREF(Py_None);
         sipRes = Py_None;
     }
     else
     {
         int * ptr = confidences;
-
+        
         // count first
         int count = 0;
-
+        
         while (*ptr != -1) ptr++;
         count = ptr - confidences;
-
+        
         // create the list
         sipRes = PyList_New(count);
         if (sipRes != NULL)
         {
             ptr = confidences;
             int i = 0;
-
+            
             // put the integers on the list
             while (*ptr != -1)
             {
-            #if PY_MAJOR_VERSION >= 3
-                PyList_SET_ITEM(sipRes, i, PyLong_FromLong((long)*ptr));
-            #else
                 PyList_SET_ITEM(sipRes, i, PyInt_FromLong((long)*ptr));
-            #endif
-
+                
                 i++;
                 ptr++;
             }
         }
-
+        
         delete [] confidences;
     }
   %End
-
+  
 
   /**
    * Applies the given word to the adaptive classifier if possible.
@@ -761,13 +761,13 @@ class TessBaseAPI
   Tesseract* const tesseract() const {
     return tesseract_;
   }*/
-
+  
   OcrEngineMode oem();
-
+  
   /*
   void InitTruthCallback(TruthCallback *cb) { truth_cb_ = cb; }
   */
-
+  
   /** Return a pointer to underlying CubeRecoContext object if present. */
   //CubeRecoContext *GetCubeRecoContext() const;
 

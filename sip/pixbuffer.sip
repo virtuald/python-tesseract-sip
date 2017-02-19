@@ -6,14 +6,20 @@ class PixBuffer /Abstract/
         #include "PixBuffer.h"
     %End
 
-public:
+    %TypeCode
+        #if PY_MAJOR_VERSION >= 3
+            #define PyInt_FromLong PyLong_FromLong
+        #endif
+    %End
+
+public: 
 
     int h;
     int w;
     int d;      // 1 or 3
-
+    
     int len;
-
+    
     //
     //  Buffer interface
     //
@@ -48,16 +54,10 @@ public:
 
     PyObject * get_shape();
     %MethodCode
-        #if PY_MAJOR_VERSION >= 3
-            PyObject * ph = PyLong_FromLong(sipCpp->h);
-            PyObject * pw = PyLong_FromLong(sipCpp->w);
-            PyObject * pd = PyLong_FromLong(sipCpp->d);
-        #else
-            PyObject * ph = PyInt_FromLong(sipCpp->h);
-            PyObject * pw = PyInt_FromLong(sipCpp->w);
-            PyObject * pd = PyInt_FromLong(sipCpp->d);
-        #endif
-
+        PyObject * ph = PyInt_FromLong(sipCpp->h);
+        PyObject * pw = PyInt_FromLong(sipCpp->w);
+        PyObject * pd = PyInt_FromLong(sipCpp->d);
+        
         if (!ph || !pw || !pd)
         {
             Py_XDECREF(ph);
@@ -65,7 +65,7 @@ public:
             Py_XDECREF(pd);
             return NULL;
         }
-
+        
         sipRes = PyTuple_Pack(3, ph, pw, pd);
     %End
 };

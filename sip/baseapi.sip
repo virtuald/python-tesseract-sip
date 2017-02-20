@@ -35,6 +35,10 @@ class TessBaseAPI
     
     %TypeCode
         Pix * mImage;
+
+        #if PY_MAJOR_VERSION >= 3
+            #define PyInt_FromLong PyLong_FromLong
+        #endif
         
         // wrapper around stuff that returns strings that need
         // to be deleted, avoiding memory leaks

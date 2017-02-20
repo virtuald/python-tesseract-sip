@@ -6,6 +6,12 @@ class PixBuffer /Abstract/
         #include "PixBuffer.h"
     %End
 
+    %TypeCode
+        #if PY_MAJOR_VERSION >= 3
+            #define PyInt_FromLong PyLong_FromLong
+        #endif
+    %End
+
 public: 
 
     int h;
